@@ -3,6 +3,7 @@ require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
 const medicineRoutes = require('./routes/medicines')
+const userRoutes = require('./routes/user')
 
 // express app
 const app = express()
@@ -11,6 +12,7 @@ const app = express()
 app.use(express.json())
 
 // routes
+app.use('/api/user', userRoutes)
 app.use('/api/medicines', medicineRoutes)
 
 // connect to db
