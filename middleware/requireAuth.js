@@ -17,7 +17,7 @@ const requireAuth = async (req, res, next) => {
 
     const userObj = await User.findOne({ _id })
     req.user = await userObj._id
-    req.isAdmin = await userObj.isAuthorized
+    req.isAdmin = await userObj.isAdmin
     next()
 
   } catch (error) {
