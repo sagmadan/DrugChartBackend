@@ -5,6 +5,7 @@ const {
     createMedicine,
 } = require('../controllers/medicineController')
 const requireAuth = require('../middleware/requireAuth')
+const requireAdminAuth = require('../middleware/requireAdminAuth')
 
 const router = express.Router()
 
@@ -16,6 +17,9 @@ router.get('/', getMedicines)
 
 //GET a single medicine
 router.get('/:id', getMedicine)
+
+// require admin auth for post/put medicines route
+router.use(requireAdminAuth)
 
 // POST a new medicine
 router.post('/', createMedicine)
