@@ -4,8 +4,12 @@ const {
     getMedicine,
     createMedicine,
 } = require('../controllers/medicineController')
+const requireAuth = require('../middleware/requireAuth')
 
 const router = express.Router()
+
+// require auth for all medicine routes
+router.use(requireAuth)
 
 // GET all medicines
 router.get('/', getMedicines)
