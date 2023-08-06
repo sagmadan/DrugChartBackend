@@ -68,7 +68,7 @@ const discontinueSchedule = async (req, res) => {
 
     // add doc to db
     try {
-        const updatedSchedule = await Schedule.findOneAndUpdate({_id: id}, {status: "discontinue"}, { new: true }).exec()
+        const updatedSchedule = await Schedule.findOneAndUpdate({_id: id}, {status: "Discontinued"}, { new: true }).exec()
         res.status(200).json(updatedSchedule)
     } catch (error) {
         res.status(400).json({ error: error.message })
