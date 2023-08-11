@@ -29,6 +29,7 @@ const createSchedule = async (req, res) => {
     const {
         medicineId,
         medicineName,
+        additionalInfo,
         timing1,
         timing2,
         timing3,
@@ -45,6 +46,7 @@ const createSchedule = async (req, res) => {
         const schedule = await Schedule.create({
             medicineId,
             medicineName,
+            additionalInfo,
             timing1,
             timing2,
             timing3,

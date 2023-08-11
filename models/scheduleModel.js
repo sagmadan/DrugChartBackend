@@ -11,6 +11,10 @@ const scheduleSchema = new Schema({
     type: String,
     required: true
   },
+  additionalInfo: {
+    type: String,
+    required: false
+  },
   timing1: {
     type: String,
     required: true
