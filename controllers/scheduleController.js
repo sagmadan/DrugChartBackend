@@ -150,9 +150,75 @@ const createSchedule = async (req, res) => {
 const discontinueSchedule = async (req, res) => {
     const { id } = req.params
 
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({ error: 'No such schedule' })
+    }
     // add doc to db
     try {
         const updatedSchedule = await Schedule.findOneAndUpdate({ _id: id }, { status: "Discontinued" }, { new: true }).exec()
+
+        // get the schedule using id
+        const schedule = await Schedule.findById(id)
+
+        // Deleting schedule from the chart starts here
+        const startDateAndTime = getDateAndTime(schedule.startFromDate, schedule.startFromTime)
+        const tillDateAndTime = getDateAndTime(schedule.tillDate, schedule.tillTime)
+        let deletionDate = new Date(schedule.startFromDate)
+
+        // iterating over different dates to delete the given schedule
+        while (deletionDate <= tillDateAndTime) {
+
+            try {
+                // get deletion date string which will be the date in the chart collection documents
+                const deletionDateString = getDateStringFromDate(deletionDate)
+
+                // get the chart document from the collection using date as the filter
+                let deletionDateChart = await Chart.findOne({ date: deletionDateString })
+
+                // timing 1 will always be present
+                const scheduleDateTime1 = getDateAndTime(deletionDateString, schedule.timing1);
+                // checking if the schedule date and time falls under the start and till date time
+                if (scheduleDateTime1 >= startDateAndTime
+                    && scheduleDateTime1 <= tillDateAndTime
+                    && deletionDateChart[schedule.timing1].get(id).status === currentMedicineStatus.NOT_GIVEN) {
+                    deletionDateChart[schedule.timing1].delete(id)
+                }
+
+                // check if timing 2 is present
+                if (schedule.timing2) {
+                    const scheduleDateTime2 = getDateAndTime(deletionDateString, schedule.timing2);
+                    // checking if the schedule date and time falls under the start and till date time
+                    if (scheduleDateTime2 >= startDateAndTime
+                        && scheduleDateTime2 <= tillDateAndTime
+                        && deletionDateChart[schedule.timing2].get(id).status === currentMedicineStatus.NOT_GIVEN) {
+                        deletionDateChart[schedule.timing2].delete(id)
+                    }
+                }
+
+                // check if timing 3 is present
+                if (schedule.timing3) {
+                    const scheduleDateTime3 = getDateAndTime(deletionDateString, schedule.timing3);
+                    // checking if the schedule date and time falls under the start and till date time
+                    if (scheduleDateTime3 >= startDateAndTime
+                        && scheduleDateTime3 <= tillDateAndTime
+                        && deletionDateChart[schedule.timing3].get(id).status === currentMedicineStatus.NOT_GIVEN) {
+                        deletionDateChart[schedule.timing3].delete(id)
+                    }
+                }
+
+                // save the updated chart
+                const updatedChart = await deletionDateChart.save();
+
+                // update the insertion date
+                deletionDate = addDaysToDate(deletionDate, frequencyToDaysMap[schedule.frequency])
+
+            } catch (error) {
+                res.status(400).json({ error: error.message })
+                return
+            }
+
+        }
+
         res.status(200).json(updatedSchedule)
     } catch (error) {
         res.status(400).json({ error: error.message })

@@ -36,11 +36,11 @@ const chartSchema = new Schema({
     "1:00 AM": {
         type: Map,
         of: timeSlotSchema
-    }, 
+    },
     "1:30 AM": {
         type: Map,
         of: timeSlotSchema
-    }, 
+    },
     "2:00 AM": {
         type: Map,
         of: timeSlotSchema
@@ -212,7 +212,7 @@ const chartSchema = new Schema({
     "11:00 PM": {
         type: Map,
         of: timeSlotSchema
-    }, 
+    },
     "11:30 PM": {
         type: Map,
         of: timeSlotSchema
